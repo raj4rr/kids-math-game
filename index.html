@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Math Kids - Add Two Numbers Fun Game</title>
+  <meta name="description" content="A fun, colorful, and interactive addition math game for kids to practice adding 2, 3, 4, and 5-digit numbers with sound effects, streak counters, and rewards!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-sunny">
+  <!-- Confetti Canvas -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="app-container">
+    <!-- Top Navigation / Controls Bar -->
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-icon">🌟</span>
+        <div>
+          <h1 class="brand-title">Super Math Kids</h1>
+          <p class="brand-subtitle">Add, Subtract, Multiply &amp; Divide Adventure!</p>
+        </div>
+      </div>
+
+      <div class="top-controls">
+        <button id="soundToggleBtn" class="pill-btn control-btn" title="Toggle Sound (Mute/Unmute)" aria-label="Toggle Sound">
+          <span class="btn-icon">🔊</span>
+          <span class="btn-text">Sound ON</span>
+        </button>
+
+        <div class="theme-picker" title="Choose Game Theme">
+          <button id="themeBtn" class="pill-btn control-btn" aria-label="Change Theme">
+            <span class="btn-icon">🎨</span>
+            <span class="btn-text">Sunny Theme</span>
+          </button>
+        </div>
+
+        <button id="resetScoreBtn" class="pill-btn control-btn danger-hover" title="Reset Score Counter" aria-label="Reset Score">
+          <span class="btn-icon">🔄</span>
+          <span class="btn-text">Reset</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Score & Stats Counters Bar -->
+    <section class="stats-card" aria-label="Game Stats and Counters">
+      <div class="stat-item" id="scoreStat">
+        <div class="stat-icon-wrapper star-glow">⭐</div>
+        <div class="stat-info">
+          <span class="stat-label">Stars Earned</span>
+          <span class="stat-value" id="starCounter">0</span>
+        </div>
+      </div>
+
+      <div class="stat-item" id="streakStat">
+        <div class="stat-icon-wrapper fire-glow">🔥</div>
+        <div class="stat-info">
+          <span class="stat-label">Win Streak</span>
+          <span class="stat-value" id="streakCounter">0</span>
+        </div>
+      </div>
+
+      <div class="stat-item" id="solvedStat">
+        <div class="stat-icon-wrapper check-glow">🎯</div>
+        <div class="stat-info">
+          <span class="stat-label">Score / Solved</span>
+          <span class="stat-value"><span id="correctCounter">0</span> / <span id="totalCounter">0</span></span>
+        </div>
+      </div>
+
+      <div class="stat-item" id="accuracyStat">
+        <div class="stat-icon-wrapper cup-glow">🏆</div>
+        <div class="stat-info">
+          <span class="stat-label">Accuracy</span>
+          <span class="stat-value" id="accuracyCounter">100%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Math Operations Selector Card -->
+    <section class="operations-card" aria-label="Choose Math Operation">
+      <div class="operations-header">
+        <span class="badge-label">⚡ SELECT OPERATION:</span>
+        <span class="op-desc" id="opDesc">Addition Mode (+)</span>
+      </div>
+      <div class="operation-selector-group" role="radiogroup" aria-label="Select math operation">
+        <button class="op-btn active" data-op="add" role="radio" aria-checked="true">
+          <span class="op-icon">➕</span>
+          <span class="op-text">Addition</span>
+          <span class="op-symbol">+</span>
+        </button>
+        <button class="op-btn" data-op="subtract" role="radio" aria-checked="false">
+          <span class="op-icon">➖</span>
+          <span class="op-text">Subtraction</span>
+          <span class="op-symbol">−</span>
+        </button>
+        <button class="op-btn" data-op="multiply" role="radio" aria-checked="false">
+          <span class="op-icon">✖️</span>
+          <span class="op-text">Multiplication</span>
+          <span class="op-symbol">×</span>
+        </button>
+        <button class="op-btn" data-op="divide" role="radio" aria-checked="false">
+          <span class="op-icon">➗</span>
+          <span class="op-text">Division</span>
+          <span class="op-symbol">÷</span>
+        </button>
+        <button class="op-btn mix-op-btn" data-op="mix" role="radio" aria-checked="false">
+          <span class="op-icon">🎲</span>
+          <span class="op-text">Mixed All</span>
+          <span class="op-symbol">Mix</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Digit Level Selector Card -->
+    <section class="difficulty-card" aria-label="Choose Number of Digits">
+      <div class="difficulty-header">
+        <span class="badge-label">👉 SELECT DIGITS LEVEL:</span>
+        <span class="level-desc" id="levelDesc">Practicing 2-digit numbers (10 to 99)</span>
+      </div>
+      <div class="digit-selector-group" role="radiogroup" aria-label="Select digits to add">
+        <button class="digit-btn" data-digits="1" role="radio" aria-checked="false">
+          <span class="digit-num">1</span>
+          <span class="digit-text">Digit</span>
+          <span class="digit-badge">1 - 9</span>
+        </button>
+        <button class="digit-btn active" data-digits="2" role="radio" aria-checked="true">
+          <span class="digit-num">2</span>
+          <span class="digit-text">Digits</span>
+          <span class="digit-badge">10 - 99</span>
+        </button>
+        <button class="digit-btn" data-digits="3" role="radio" aria-checked="false">
+          <span class="digit-num">3</span>
+          <span class="digit-text">Digits</span>
+          <span class="digit-badge">100 - 999</span>
+        </button>
+        <button class="digit-btn" data-digits="4" role="radio" aria-checked="false">
+          <span class="digit-num">4</span>
+          <span class="digit-text">Digits</span>
+          <span class="digit-badge">1,000+</span>
+        </button>
+        <button class="digit-btn" data-digits="5" role="radio" aria-checked="false">
+          <span class="digit-num">5</span>
+          <span class="digit-text">Digits</span>
+          <span class="digit-badge">10,000+</span>
+        </button>
+        <button class="digit-btn mix-btn" data-digits="mix" role="radio" aria-checked="false">
+          <span class="digit-num">🎲</span>
+          <span class="digit-text">Mixed</span>
+          <span class="digit-badge">Surprise!</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Game Board -->
+    <main class="game-arena">
+      <!-- Layout & Helper toolbar -->
+      <div class="arena-toolbar">
+        <div class="view-toggle-wrap">
+          <span class="toolbar-label">Format:</span>
+          <button id="viewToggleBtn" class="pill-btn mini-btn" title="Switch between Vertical & Horizontal view">
+            <span id="viewIcon">📐</span>
+            <span id="viewText">Vertical View</span>
+          </button>
+        </div>
+
+        <div class="hints-toggle-wrap">
+          <button id="carryHelperBtn" class="pill-btn mini-btn" title="Toggle carry-over helper boxes">
+            <span>✏️</span>
+            <span id="carryHelperText">Carry Helper: ON</span>
+          </button>
+          <button id="hintBtn" class="pill-btn mini-btn secondary" title="Get a smart hint">
+            <span>💡</span>
+            <span>Hint</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mascot & Speech Bubble -->
+      <div class="mascot-bar">
+        <div class="mascot-avatar" id="mascotAvatar">🦊</div>
+        <div class="speech-bubble" id="speechBubble">
+          Let's add these two numbers! You can do it! 🚀
+        </div>
+      </div>
+
+      <!-- Math Equation Container -->
+      <div class="math-board-card" id="mathBoard">
+        <!-- Vertical Column Math View -->
+        <div class="vertical-math-view" id="verticalMathView">
+          <!-- Carry boxes row -->
+          <div class="carries-row" id="carriesRow" aria-label="Carry over boxes">
+            <!-- Dynamically populated carry helper input boxes -->
+          </div>
+
+          <!-- Numbers display -->
+          <div class="vertical-numbers-table" id="verticalTable">
+            <div class="row num1-row">
+              <span class="plus-placeholder"></span>
+              <div class="digits-cells" id="digitsNum1">
+                <!-- Digits inserted dynamically -->
+              </div>
+            </div>
+            <div class="row num2-row">
+              <span class="math-operator" id="verticalOperator" aria-label="operator">+</span>
+              <div class="digits-cells" id="digitsNum2">
+                <!-- Digits inserted dynamically -->
+              </div>
+            </div>
+            <div class="horizontal-line"></div>
+            <!-- Answer input row in vertical view -->
+            <div class="row answer-row">
+              <span class="equals-sign">=</span>
+              <div class="answer-input-container">
+                <input type="text" id="verticalAnswerInput" inputmode="numeric" pattern="[0-9]*" maxlength="7" placeholder="?" autocomplete="off" aria-label="Enter your answer">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Horizontal Math View (Toggled) -->
+        <div class="horizontal-math-view hidden" id="horizontalMathView">
+          <span class="h-number" id="hNum1">45</span>
+          <span class="h-operator" id="hOperator">+</span>
+          <span class="h-number" id="hNum2">27</span>
+          <span class="h-operator">=</span>
+          <input type="text" id="horizontalAnswerInput" inputmode="numeric" pattern="[0-9]*" maxlength="7" placeholder="?" autocomplete="off" aria-label="Enter your answer">
+        </div>
+
+        <!-- Feedback & Result Banner -->
+        <div class="result-banner hidden" id="resultBanner">
+          <div class="result-icon" id="resultIcon">🎉</div>
+          <div class="result-text-group">
+            <h3 class="result-title" id="resultTitle">Awesome Job!</h3>
+            <p class="result-detail" id="resultDetail">45 + 27 = 72</p>
+          </div>
+          <button id="nextQuestionBtn" class="pill-btn primary-pulse next-btn">
+            <span>Next Round</span>
+            <span>➡️</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hint Box Container (Expandable) -->
+      <div class="hint-card hidden" id="hintCard">
+        <div class="hint-card-header">
+          <span class="hint-title">💡 Smart Helper Tip:</span>
+          <button id="closeHintBtn" class="icon-close-btn" aria-label="Close hint">&times;</button>
+        </div>
+        <p class="hint-content" id="hintContent">Start adding from the right side (ones place) first!</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="main-actions-row">
+        <button id="checkAnswerBtn" class="action-btn submit-btn" aria-label="Check Answer">
+          <span class="action-btn-icon">✨</span>
+          <span class="action-btn-text">Check Answer!</span>
+        </button>
+        <button id="skipQuestionBtn" class="action-btn skip-btn" aria-label="New Random Numbers">
+          <span class="action-btn-icon">🎲</span>
+          <span class="action-btn-text">New Numbers</span>
+        </button>
+      </div>
+
+      <!-- Kid-Friendly Onscreen Numpad -->
+      <div class="numpad-container" aria-label="Interactive Number Pad">
+        <div class="numpad-grid">
+          <button class="numpad-key" data-key="1">1</button>
+          <button class="numpad-key" data-key="2">2</button>
+          <button class="numpad-key" data-key="3">3</button>
+          <button class="numpad-key" data-key="4">4</button>
+          <button class="numpad-key" data-key="5">5</button>
+          <button class="numpad-key" data-key="6">6</button>
+          <button class="numpad-key" data-key="7">7</button>
+          <button class="numpad-key" data-key="8">8</button>
+          <button class="numpad-key" data-key="9">9</button>
+          <button class="numpad-key clear-key" data-key="clear" title="Clear input">C</button>
+          <button class="numpad-key" data-key="0">0</button>
+          <button class="numpad-key backspace-key" data-key="backspace" title="Delete last digit">⌫</button>
+        </div>
+      </div>
+
+      <!-- Step-by-Step Explanation Modal / Box -->
+      <div class="steps-dialog-backdrop hidden" id="stepsDialogBackdrop">
+        <div class="steps-dialog" role="dialog" aria-modal="true" aria-labelledby="stepsTitle">
+          <div class="steps-dialog-header">
+            <h2 id="stepsTitle">🌟 Step-by-Step Addition Solution</h2>
+            <button id="closeStepsBtn" class="icon-close-btn" aria-label="Close steps">&times;</button>
+          </div>
+          <div class="steps-dialog-body" id="stepsContent">
+            <!-- Populated dynamically with column steps -->
+          </div>
+          <div class="steps-dialog-footer">
+            <button id="gotItBtn" class="action-btn submit-btn">I Got It! Next Question 🚀</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Day & Date-Wise Results & History Section -->
+    <section class="history-section" aria-label="Day and Date-Wise Game Results">
+      <div class="history-header">
+        <div class="history-title-group">
+          <h2 class="history-title">📅 Practice Results & Daily Progress Report</h2>
+          <span class="history-subtitle">Track problems solved day-by-day with dates & accuracy</span>
+        </div>
+        <div class="history-header-actions">
+          <button id="clearHistoryBtn" class="mini-text-btn" title="Clear all saved history">Clear All History</button>
+        </div>
+      </div>
+
+      <!-- History Filter Bar -->
+      <div class="history-filter-bar">
+        <div class="filter-item">
+          <label for="historyDateFilter">Day/Date:</label>
+          <select id="historyDateFilter" class="filter-select" aria-label="Filter by Date">
+            <option value="all">All Dates</option>
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label for="historyStatusFilter">Status:</label>
+          <select id="historyStatusFilter" class="filter-select" aria-label="Filter by Status">
+            <option value="all">All Results</option>
+            <option value="passed">✅ Correct Only</option>
+            <option value="failed">❌ Mistakes Only</option>
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label for="historyOpFilter">Operation:</label>
+          <select id="historyOpFilter" class="filter-select" aria-label="Filter by Operation">
+            <option value="all">All Operations</option>
+            <option value="+">➕ Addition (+)</option>
+            <option value="−">➖ Subtraction (−)</option>
+            <option value="×">✖️ Multiplication (×)</option>
+            <option value="÷">➗ Division (÷)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Days & Date-wise Cards Container -->
+      <div class="history-days-container" id="historyDaysContainer">
+        <div class="empty-history">Start playing to see your math achievements organized by days and dates! 🎈</div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Made with ❤️ for smart kids • Practice 2, 3, 4 & 5-digit addition anywhere!</p>
+      <p class="cookie-notice"><span class="cookie-icon">🍪</span> Results & achievements automatically saved in cookie for 1 year</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
